@@ -1,0 +1,7 @@
+musashi/m68kops.c
+musashi/m68kops.h
+musashi/m68kmake
+
+anamatsu
+
+**/*.o
