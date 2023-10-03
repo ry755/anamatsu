@@ -4,8 +4,8 @@
 ; inputs:
 ; a0: pointer to null-terminated string
 ; d0: X coordinate
-; d1: Y coordinate.
-; d2: inverted (0 or 1)
+; d1: Y coordinate
+; d2: flags
 ; outputs:
 ; d0: X coordinate of the end of the text
 draw_string:
