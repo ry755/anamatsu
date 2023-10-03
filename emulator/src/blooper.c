@@ -20,43 +20,65 @@ uint16_t colors_pointer = 0x0000;
 uint8_t mode = 0x00;
 uint8_t old_mode = 0x00;
 
+enum commands {
+    CmdSetPixelPtr = 0x00,
+    CmdSetColorPtr = 0x01,
+    CmdSetPixelReadWrite = 0x02,
+    CmdSetColorReadWrite = 0x03,
+    CmdDecPixelPtr = 0x04,
+    CmdDecColorPtr = 0x05,
+    CmdKeyboardRead = 0x10,
+    CmdAcknowledge = 0xFF
+};
+
+enum modes {
+    ModePixelReadWrite = 0x00,
+    ModeColorReadWrite = 0x01,
+    ModePixelPtrSet = 0x02,
+    ModePixelPtrSetLow = 0x03,
+    ModeColorPtrSet = 0x04,
+    ModeColorPtrSetLow = 0x05,
+    ModeKeyboardRead = 0x10,
+    ModeAcknowledge = 0xFF
+};
+
 void blooper_command_write(uint8_t command) {
     switch (command) {
-        case 0x00:
+        case CmdSetPixelPtr:
             // set pixels pointer
-            mode = 0x02;
+            mode = ModePixelPtrSet;
             break;
-        case 0x01:
+        case CmdSetColorPtr:
             // set colors pointer
-            mode = 0x04;
+            mode = ModeColorPtrSet;
             break;
-        case 0x02:
+        case CmdSetPixelReadWrite:
             // set read/write to pixels
-            mode = 0x00;
+            mode = ModePixelReadWrite;
             break;
-        case 0x03:
+        case CmdSetColorReadWrite:
             // set read/write to colors
-            mode = 0x01;
+            mode = ModeColorReadWrite;
             break;
-        case 0x04:
+        case CmdDecPixelPtr:
             // decrement pixels pointer
             pixels_pointer--;
             break;
-        case 0x05:
+        case CmdDecColorPtr:
             // decrement colors pointer
             colors_pointer--;
             break;
 
-        case 0x10:
+        case CmdKeyboardRead:
             // set read from keyboard
             old_mode = mode;
-            mode = 0x10;
+            mode = ModeKeyboardRead;
             break;
 
-        case 0xFF:
+        case CmdAcknowledge:
             // set acknowledge
             old_mode = mode;
-            mode = 0xFF;
+            mode = ModeAcknowledge;
             break;
 
         default:
@@ -66,24 +88,24 @@ void blooper_command_write(uint8_t command) {
 
 void blooper_data_write(uint8_t data) {
     switch (mode) {
-        case 0x00:
+        case ModePixelReadWrite:
             // pixel write
             pixels[pixels_pointer++] = data;
             if (pixels_pointer >= sizeof(pixels))
                 pixels_pointer = 0;
             break;
-        case 0x01:
+        case ModeColorReadWrite:
             // color write
             colors[colors_pointer++] = data;
             if (colors_pointer >= sizeof(colors))
                 colors_pointer = 0;
             break;
-        case 0x02:
+        case ModePixelPtrSet:
             // set high byte of pixels pointer
             pixels_pointer = data << 8;
             mode = 3;
             break;
-        case 0x03:
+        case ModePixelPtrSetLow:
             // set low byte of pixels pointer
             pixels_pointer = pixels_pointer | data;
             mode = 0;
@@ -96,25 +118,25 @@ void blooper_data_write(uint8_t data) {
 
 uint8_t blooper_data_read() {
     switch (mode) {
-        case 0x00:
+        case ModePixelReadWrite:
             // pixel read
             uint8_t pixel = pixels[pixels_pointer++];
             if (pixels_pointer >= sizeof(pixels))
                 pixels_pointer = 0;
             return pixel;
-        case 0x01:
+        case ModeColorReadWrite:
             // color read
             uint8_t color = colors[colors_pointer++];
             if (colors_pointer >= sizeof(colors))
                 colors_pointer = 0;
             return color;
 
-        case 0x10:
+        case ModeKeyboardRead:
             // keyboard read
             mode = old_mode;
             return (uint8_t)key_take();
 
-        case 0xFF:
+        case ModeAcknowledge:
             // acknowledge
             mode = old_mode;
             return 'B';
