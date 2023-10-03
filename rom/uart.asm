@@ -83,7 +83,7 @@ uart_transmit_hex:
 ; outputs:
 ; none
 turn_led_on:
-    bset.b  #UART_MCR_LED,UART+UART_MCR
+    bset.b #UART_MCR_LED,UART+UART_MCR
     rts
 
 ; turn the status LED off
@@ -92,7 +92,7 @@ turn_led_on:
 ; outputs:
 ; none
 turn_led_off:
-    bclr.b  #UART_MCR_LED,UART+UART_MCR
+    bclr.b #UART_MCR_LED,UART+UART_MCR
     rts
 
 ; toggle the status LED
@@ -101,5 +101,5 @@ turn_led_off:
 ; outputs:
 ; none
 toggle_led:
-    bchg.b  #UART_MCR_LED,UART+UART_MCR
+    bchg.b #UART_MCR_LED,UART+UART_MCR
     rts

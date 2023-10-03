@@ -28,22 +28,22 @@ entry:
     move.w #$2000,sr
 
     ; fill screen with pattern
-    move.l #384-FONT_HEIGHT,d1
+    move.l #384-8,d1
     clr.l d2
     move.l #255,d3
 .y_loop:
-    move.l #512-FONT_WIDTH,d0
+    move.l #512-8,d0
 .x_loop:
     bsr draw_character
-    subq #FONT_WIDTH,d0
+    subq #8,d0
     bne .x_loop
     bsr draw_character
     subq #FONT_HEIGHT,d1
     bne .y_loop
-    move.l #512-FONT_WIDTH,d0
+    move.l #512-8,d0
 .x_loop_end:
     bsr draw_character
-    subq #FONT_WIDTH,d0
+    subq #8,d0
     bne .x_loop_end
     bsr draw_character
 
@@ -101,7 +101,6 @@ done_str: dc.b "done", 10, 0
     include "uart.asm"
     include "vsync.asm"
 
-FONT_WIDTH  equ 8
 FONT_HEIGHT equ 8
 font:
     include "font/msx_font.inc"

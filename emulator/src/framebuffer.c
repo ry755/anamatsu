@@ -22,8 +22,8 @@ void draw_framebuffer(struct Screen *screen) {
     // FIXME: colors are currently hard-coded to black and white for 0 and 1 respectively, the color table is not used
     for (int y = 0; y < FRAMEBUFFER_HEIGHT; y++) {
         for (int x = 0; x < FRAMEBUFFER_WIDTH; x += 8) {
-            for (int bit = 0; bit < 8; bit++) {
-                uint8_t pixel = (pixels[(y * FRAMEBUFFER_WIDTH / 8) + (x / 8)] >> bit) & 1;
+            for (int bit = 0, rev_bit = 7; bit < 8; bit++, rev_bit--) {
+                uint8_t pixel = (pixels[(y * FRAMEBUFFER_WIDTH / 8) + (x / 8)] >> rev_bit) & 1;
                 final_framebuffer[(y * FRAMEBUFFER_WIDTH) + x + bit] = pixel ? 0xFF : 0x00;
             }
         }
