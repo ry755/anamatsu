@@ -51,12 +51,17 @@ entry:
     lea hello_str,a0
     moveq #16,d0
     moveq #16,d1
-    clr.l d2
+    clr.l d2 ; no invert, opaque background
     bsr draw_string
     lea inverted_str,a0
     moveq #16,d0
     moveq #24,d1
-    st d2
+    moveq #1,d2 ; invert, opaque background
+    bsr draw_string
+    lea transparent_str,a0
+    moveq #16,d0
+    moveq #32,d1
+    moveq #2,d2 ; no invert, transparent background
     bsr draw_string
 
 event_loop:
@@ -81,6 +86,7 @@ key_down_event:
 
 hello_str: dc.b "hello world! this is my 68000 computer emulator :3", 0
 inverted_str: dc.b "it can also draw with inverted colors!", 0
+transparent_str: dc.b "here it is with a transparent background!", 0
     even
 
 illegal_opcode_handler:

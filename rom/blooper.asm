@@ -26,7 +26,9 @@ BLOOPER_CMD_REGION_BYTE_AND         equ $25
 ; inputs:
 ; d0: X coordinate
 ; d1: Y coordinate
-; d2: inverted (0 or 1)
+; d2: flags
+;     invert: bit 0
+;     transparent background: bit 1
 ; d3: character
 ; outputs:
 ; none
@@ -56,11 +58,16 @@ draw_character:
     move.b #FONT_HEIGHT,BLOOPER_DATA(a1)
 
     moveq #FONT_HEIGHT,d4 ; Y counter
+    btst #1,d2
+    bne .transparent_background
+    move.b #BLOOPER_CMD_SET_READ_WRITE_PIXEL,BLOOPER_CMD(a1)
+    bra .loop
+.transparent_background:
     move.b #BLOOPER_CMD_REGION_BYTE_OR,BLOOPER_CMD(a1)
 .loop:
     move.b (a0)+,d0
 
-    tst.l d2
+    btst #0,d2
     beq .no_invert
     not.b d0
 .no_invert:
