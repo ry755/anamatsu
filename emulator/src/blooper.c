@@ -253,19 +253,22 @@ void blooper_data_write(uint8_t data) {
 
 uint8_t blooper_data_read() {
     switch (mode) {
-        case ModePixelReadWrite:
+        case ModePixelReadWrite: {
             // pixel read
             uint8_t pixel = pixels[pixels_pointer];
             increment_pixels_pointer();
             if (pixels_pointer >= sizeof(pixels))
                 pixels_pointer = 0;
             return pixel;
-        case ModeColorReadWrite:
+        }
+
+        case ModeColorReadWrite: {
             // color read
             uint8_t color = colors[colors_pointer++];
             if (colors_pointer >= sizeof(colors))
                 colors_pointer = 0;
             return color;
+        }
 
         case ModeKeyboardRead:
             // keyboard read
